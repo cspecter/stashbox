@@ -1,0 +1,63 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-stashbox-dev-145518-authRole",
+      "UnauthRoleArn": "arn:aws:iam::068441697550:role/amplify-stashbox-dev-145518-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::068441697550:role/amplify-stashbox-dev-145518-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-stashbox-dev-145518-deployment",
+      "UnauthRoleName": "amplify-stashbox-dev-145518-unauthRole",
+      "StackName": "amplify-stashbox-dev-145518",
+      "StackId": "arn:aws:cloudformation:us-east-1:068441697550:stack/amplify-stashbox-dev-145518/23a4c030-0fe1-11eb-ba05-0ecb50cc3755",
+      "AmplifyAppId": "d1ppzm737z534s"
+    }
+  },
+  "auth": {
+    "stashboxbf9d1e2a": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-stashbox-dev-145518-deployment/amplify-cfn-templates/auth/stashboxbf9d1e2a-cloudformation-template.yml",
+        "logicalId": "authstashboxbf9d1e2a"
+      },
+      "lastPushTimeStamp": "2020-10-21T12:32:59.337Z",
+      "output": {
+        "AppClientSecret": "92lvijk3cf26msvs4rvicc4hvco5m1ivopttbcto71te9a11mks",
+        "UserPoolId": "us-east-1_vLQR5hIkm",
+        "AppClientIDWeb": "4209pa1liugjbv9u5ss1lubo7p",
+        "AppClientID": "4mfbvb8q8qgfaa38p96npua9n1",
+        "IdentityPoolId": "us-east-1:235c3c8b-5ad4-4b0d-ae01-e7586c4646c2",
+        "IdentityPoolName": "stashboxbf9d1e2a_identitypool_bf9d1e2a__dev",
+        "UserPoolName": "stashboxbf9d1e2a_userpool_bf9d1e2a"
+      },
+      "lastPushDirHash": "iCH/A/fqET+5yC4xGw/ng+fah04="
+    },
+    "userPoolGroups": {
+      "service": "Cognito-UserPool-Groups",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "stashboxbf9d1e2a",
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
+          ]
+        }
+      ],
+      "lastPushTimeStamp": "2020-10-21T12:32:59.345Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-stashbox-dev-145518-deployment/amplify-cfn-templates/auth/template.json",
+        "logicalId": "authuserPoolGroups"
+      },
+      "output": {
+        "StashboxGroupRole": "arn:aws:iam::068441697550:role/us-east-1_vLQR5hIkm-StashboxGroupRole"
+      },
+      "lastPushDirHash": "imVtm6L7MzhByyWS3h6AWzuS0uI="
+    }
+  }
+}

@@ -3,4 +3,5 @@
 
 module.exports = { 
     presets: ['@expo/next-adapter/babel','babel-preset-expo'],
+    plugins: [["react-native-web", { "commonjs": true }], "@babel/plugin-proposal-class-properties"]
  };
