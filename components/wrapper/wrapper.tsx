@@ -1,16 +1,16 @@
 import React from 'react';
-import { Dimensions } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import styled from 'styled-components';
 
 const { width, height } = Dimensions.get('window');
 
 const Wrapper = styled.div({
   width,
-    height
+  height
 });
 
 export default (props) => (
-  <Wrapper>
+  <View>
     {props.children}
-  </Wrapper>
+  </View>
 );

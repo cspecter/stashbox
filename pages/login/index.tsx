@@ -32,10 +32,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const Holder = styled.div({
+const Flex = styled.div({
+  display: "flex",
   flex: 1,
   justifyContent: 'center',
   alignItems: 'center',
+  width
+});
+
+const Holder = styled.div({
   width: 376
 });
 
@@ -68,9 +73,9 @@ const Login = ({ init }) => {
   return (
     <Wrapper>
       <Grad1>
-        <Holder>
+        <Flex>
           {renderMode()}
-        </Holder>
+        </Flex>
       </Grad1>
     </Wrapper>
   )
@@ -83,10 +88,10 @@ export default Login
 const NotLoggedIn = ({ onChange }) => {
 
   return (
-    <div>
-      <Button block rounded>
+    <Holder>
+      <Button block rounded light>
             <Text>Primary</Text>
       </Button>
-    </div>
+    </Holder>
   )
 }
