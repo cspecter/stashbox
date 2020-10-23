@@ -1,5 +1,65 @@
+@font-face {
+    font-family: "Entypo";
+    src: url("~react-native-vector-icons/Fonts/Entypo.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "EvilIcons";
+    src: url("~react-native-vector-icons/Fonts/EvilIcons.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "FontAwesome";
+    src: url("~react-native-vector-icons/Fonts/FontAwesome.ttf")
+      format("truetype");
+  }
+  
+  @font-face {
+    font-family: "fontcustom";
+    src: url("~react-native-vector-icons/Fonts/Foundation.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "Ionicons";
+    src: url("~react-native-vector-icons/Fonts/Ionicons.ttf") format("truetype");
+  }
+  
+  @font-face {
+    /*font-family: 'MaterialCommunityIcons';*/
+    font-family: "Material Design Icons";
+    src: url("~react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf")
+      format("truetype");
+  }
+  
+  @font-face {
+    font-family: "MaterialIcons";
+    src: url("~react-native-vector-icons/Fonts/MaterialIcons.ttf")
+      format("truetype");
+  }
+  
+  @font-face {
+    font-family: "Octicons";
+    src: url("~react-native-vector-icons/Fonts/Octicons.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "simple-line-icons";
+    src: url("~react-native-vector-icons/Fonts/SimpleLineIcons.ttf")
+      format("truetype");
+  }
+  
+  @font-face {
+    font-family: "Zocial";
+    src: url("~react-native-vector-icons/Fonts/Zocial.ttf") format("truetype");
+  }
+
+  @font-face {
+    font-family: "Lato";
+    src: url("https://fonts.googleapis.com/css2?family=Lato&display=swap") format("truetype");
+  }
+
 body {
-    font-family: 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', 'Helvetica',
+    font-family: 'Lato', 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', 'Helvetica',
         'Arial', sans-serif;
     padding: 20px 20px 60px;
     max-width: 680px;
