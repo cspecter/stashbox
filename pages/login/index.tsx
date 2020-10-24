@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
-import { Button, Container, Content, Header, Left, Icon, Body, Title, Right } from 'native-base';
+import { StyleSheet, Text, Dimensions } from 'react-native';
+import { Button, Container, Content, Header, Left, Icon, Body, Title, Right, Item, Input, H1 } from 'native-base';
 import styled from 'styled-components';
 import { AWS } from '../../lib/aws';
 import Grad1 from '../../components/backgrounds/grad1';
@@ -10,7 +10,7 @@ const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFFFFFF",
+    backgroundColor: "rgba(0,0,0,0)",
     width
   },
   content: {
@@ -33,32 +33,12 @@ const styles = StyleSheet.create({
   button: {
     margin: 2,
   },
-
-});
-
-const Flex = styled.div({
-  display: "flex",
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-  width
+  item: { marginTop: 10 }
 });
 
 const Holder = styled.div({
   width: 315,
   height: 876,
-});
-
-const BoxUpper = styled.div({
-  height: "50%",
-  display: "flex",
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-});
-
-const BoxLower = styled.div({
-  height: "50%"
 });
 
 const Login = ({ init }) => {
@@ -105,6 +85,18 @@ export default Login
 
 // Components
 
+const BoxUpper = styled.div({
+  height: "50%",
+  display: "flex",
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
+const BoxLower = styled.div({
+  height: "50%"
+});
+
 const NotLoggedIn = ({ onChange }) => {
 
   return (
@@ -118,7 +110,7 @@ const NotLoggedIn = ({ onChange }) => {
             <Button block rounded onPress={() => onChange(1)}>
               <Text>SIGN UP</Text>
             </Button>
-            <Button block rounded light style={{ marginTop: 10 }} onPress={() => onChange(2)}>
+            <Button block rounded light style={styles.item} onPress={() => onChange(2)}>
               <Text>LOG IN</Text>
             </Button>
           </BoxLower>
@@ -128,12 +120,24 @@ const NotLoggedIn = ({ onChange }) => {
   )
 }
 
+const TextBox = styled.div({
+  marginTop: 132,
+  display: "flex",
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
+const FormBox = styled.div({
+  marginTop: 78
+});
+
 const SignUp = ({ onChange }) => {
   return (
-    <Container>
-      <Header>
+    <Container style={styles.container}>
+      <Header iosBarStyle={"light-content"} transparent>
         <Left>
-          <Button transparent>
+          <Button transparent onPress={() => onChange(0)}>
             <Icon name='arrow-back' />
           </Button>
         </Left>
@@ -142,8 +146,25 @@ const SignUp = ({ onChange }) => {
         </Body>
         <Right />
       </Header>
-      <Content>
-
+      <Content contentContainerStyle={styles.content}>
+        <Holder>
+          <TextBox>
+            <Text>
+              <H1>Let's get started!</H1>
+            </Text>
+          </TextBox>
+          <FormBox>
+            <Item rounded>
+              <Input placeholder='Email' />
+            </Item>
+            <Item rounded style={styles.item}>
+              <Input placeholder='Enter password' secureTextEntry={true}/>
+            </Item>
+            <Item rounded style={styles.item}>
+              <Input placeholder='Re-enter password' secureTextEntry={true}/>
+            </Item>
+          </FormBox>
+        </Holder>
       </Content>
     </Container>
   )
