@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, Dimensions } from 'react-native';
 import { Button, Container, Content, Header, Left, Icon, Body, Title, Right, Item, Input, H1 } from 'native-base';
+import { Col, Row, Grid } from 'react-native-easy-grid';
 import styled from 'styled-components';
 import { AWS } from '../../lib/aws';
 import Grad1 from '../../components/backgrounds/grad1';
@@ -15,9 +16,9 @@ const styles = StyleSheet.create({
   },
   content: {
     display: "flex",
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'column',
     width
   },
   headline: {
@@ -33,12 +34,30 @@ const styles = StyleSheet.create({
   button: {
     margin: 2,
   },
-  item: { marginTop: 10 }
+  f1: {
+    flex: 1
+  },
+  item: { marginTop: 10 },
+  grid: {
+    width,
+    height,
+    maxWidth: 315,
+    maxHeight: 876,
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column'
+  },
+  bottom: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 const Holder = styled.div({
-  width: 315,
-  height: 876,
+  maxWidth: 315,
+  maxHeight: 876,
 });
 
 const Login = ({ init }) => {
@@ -85,54 +104,40 @@ export default Login
 
 // Components
 
-const BoxUpper = styled.div({
-  height: "50%",
-  display: "flex",
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-});
-
-const BoxLower = styled.div({
-  height: "50%"
-});
-
 const NotLoggedIn = ({ onChange }) => {
 
   return (
     <Container style={styles.container}>
       <Content contentContainerStyle={styles.content}>
-        <Holder>
-          <BoxUpper>
+        <Grid style={styles.grid}>
+          <Row style={styles.center}>
             <Logo width={240} tone="color" />
-          </BoxUpper>
-          <BoxLower>
-            <Button block rounded onPress={() => onChange(1)}>
-              <Text>SIGN UP</Text>
-            </Button>
-            <Button block rounded light style={styles.item} onPress={() => onChange(2)}>
-              <Text>LOG IN</Text>
-            </Button>
-          </BoxLower>
-        </Holder>
+          </Row>
+          <Row style={styles.bottom}>
+            <div style={{ flex: 1 }}>
+              <Button block rounded onPress={() => onChange(1)} >
+                <Text>SIGN UP</Text>
+              </Button>
+              <Button block rounded bordered dark onPress={() => onChange(2)} style={{ marginTop: 10 }}>
+                <Text>LOG IN</Text>
+              </Button>
+            </div>
+          </Row>
+        </Grid>
       </Content>
     </Container>
   )
 }
 
-const TextBox = styled.div({
-  marginTop: 132,
-  display: "flex",
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-});
-
 const FormBox = styled.div({
-  marginTop: 78
+  marginTop: 78,
+  width: '100%',
+  flex: 1
 });
 
-const SignUp = ({ onChange }) => {
+const SignUp = ({ onChange, onSignedUp }) => {
+  
+
   return (
     <Container style={styles.container}>
       <Header iosBarStyle={"light-content"} transparent>
@@ -147,24 +152,33 @@ const SignUp = ({ onChange }) => {
         <Right />
       </Header>
       <Content contentContainerStyle={styles.content}>
-        <Holder>
-          <TextBox>
+        <Grid style={styles.grid}>
+          <Row style={styles.center}>
             <Text>
               <H1>Let's get started!</H1>
             </Text>
-          </TextBox>
-          <FormBox>
-            <Item rounded>
-              <Input placeholder='Email' />
-            </Item>
-            <Item rounded style={styles.item}>
-              <Input placeholder='Enter password' secureTextEntry={true}/>
-            </Item>
-            <Item rounded style={styles.item}>
-              <Input placeholder='Re-enter password' secureTextEntry={true}/>
-            </Item>
-          </FormBox>
-        </Holder>
+          </Row>
+          <Row style={styles.center}>
+            <FormBox>
+              <Item rounded>
+                <Input placeholder='Email' />
+              </Item>
+              <Item rounded style={styles.item}>
+                <Input placeholder='Enter password' secureTextEntry={true} />
+              </Item>
+            </FormBox>
+            <Text style={{flex: 1, textAlign: 'center'}}>
+            By selecting Create Account I hearby agree to Stashbox’s Terms of Use and Privacy Policy.
+            </Text>
+          </Row>
+          <Row style={styles.bottom}>
+          <div style={{ flex: 1}}>
+              <Button block dark rounded bordered onPress={() => onChange(1)} >
+                <Text>CREATE ACCOUNT</Text>
+              </Button>
+            </div>
+          </Row>
+        </Grid>
       </Content>
     </Container>
   )

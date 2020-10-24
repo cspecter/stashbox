@@ -136,7 +136,10 @@ export default {
   brandDanger: '#d9534f',
   brandWarning: '#f0ad4e',
   brandDark: '#000',
-  brandLight: '#a9a9a9',
+  brandLight: '#fff',
+
+  // Alt Colors
+  buttonBorder: '#c8c8c8',
 
   // Container
   containerBgColor: '#fff',
@@ -222,6 +225,9 @@ export default {
   lineHeightH3: 25,
   lineHeight: platform === PLATFORM.IOS ? 20 : 24,
 
+  // Size Font Weights
+  weightH1: 900,
+
   // List
   listBg: 'transparent',
   listBorderColor: '#c9c9c9',
@@ -292,6 +298,7 @@ export default {
   deviceHeight,
   isIphoneX,
   inputGroupRoundedBorderRadius: 30,
+  roundedBorder: '1px solid #C8C8C8',
 
   // iPhoneX SafeArea
   Inset: {

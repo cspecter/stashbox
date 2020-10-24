@@ -231,7 +231,8 @@ export default (variables /* : * */ = variable) => {
     },
 
     '.rounded': {
-      borderRadius: variables.borderRadiusLarge
+      borderRadius: variables.borderRadiusLarge,
+      border: variables.roundedBorder,
     },
 
     '.transparent': {
