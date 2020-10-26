@@ -13,6 +13,7 @@
     "@expo/vector-icons": "^10.2.1",
     "aws-amplify": "^3.3.4",
     "cosmicjs": "^3.3.1",
+    "date-fns": "^2.16.1",
     "expo": "~39.0.2",
     "expo-status-bar": "~1.0.2",
     "native-base": "https://github.com/matias91/NativeBase#Bugfix/tabs-viewproptypes-error",
@@ -21,13 +22,15 @@
     "next-images": "^1.6.0",
     "next-transpile-modules": "^4.1.0",
     "react": "16.13.1",
+    "react-day-picker": "^7.4.8",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.3.tar.gz",
     "react-native-svg": "^12.1.0",
     "react-native-web": "^0.14.0",
     "remark": "^13.0.0",
     "remark-html": "^13.0.1",
-    "styled-components": "^5.2.0"
+    "styled-components": "^5.2.0",
+    "validate.js": "^0.13.1"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",

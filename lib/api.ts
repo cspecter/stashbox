@@ -1,9 +1,10 @@
 import Cosmic from 'cosmicjs';
 import {  Post, Posts, Preview , FeaturedPostNPosts} from '../interfaces';
 
-
 const BUCKET_SLUG = process.env.COSMIC_BUCKET_SLUG
 const READ_KEY = process.env.COSMIC_READ_KEY
+
+console.log(process.env, BUCKET_SLUG, READ_KEY);
 
 const bucket = Cosmic().bucket({
   slug: BUCKET_SLUG,
@@ -82,5 +83,67 @@ export async function getBrandAndMoreBrands(slug:string, preview:Preview){
   return {
     post: featurePost,
     morePosts,
+  }
+}
+
+export async function addUserToCosmic(uid:string, email:string, username:string) {
+  const params = {
+    title: uid,
+    type_slug: 'users',
+    content: '',
+    metafields: [
+      {
+        key: 'username',
+        type: 'text',
+        value: username
+      },
+      {
+        key: 'email',
+        type: 'text',
+        value: email
+      }
+    ],
+    options: {
+      slug_field: uid
+    }
+  };
+
+  try {
+    const data = bucket.addObject(params);
+    return data
+  } catch (error) {
+    throw new Error(error);
+  }
+
+}
+
+export async function getUser(uid) {
+  try {
+    const user = await bucket.getObject({
+      slug: uid,
+      props: 'slug,title,username,zip_code,email, birthday, is_over_21' // get only what you need
+    });
+
+    return user
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+export async function updateUser({uid, birthday, isOver21}) {
+  try {
+    const params = {
+      slug: uid
+    };
+
+    if (birthday) params["birthday"] = birthday;
+    if (isOver21) params["is_over_21"] = isOver21;
+
+    const user = await bucket.editObjectMetafields(params);
+
+    return user
+
+  } catch (error) {
+    throw new Error(error);
   }
 }
