@@ -1,14 +1,14 @@
 import Cosmic from 'cosmicjs';
 import {  Post, Posts, Preview , FeaturedPostNPosts} from '../interfaces';
 
-const BUCKET_SLUG = process.env.COSMIC_BUCKET_SLUG
-const READ_KEY = process.env.COSMIC_READ_KEY
-
-console.log(process.env, BUCKET_SLUG, READ_KEY);
+const BUCKET_SLUG = process.env.NEXT_PUBLIC_COSMIC_BUCKET_SLUG;
+const READ_KEY = process.env.NEXT_PUBLIC_COSMIC_READ_KEY;
+const WRITE_KEY = process.env.NEXT_PUBLIC_COSMIC_WRITE_KEY;
 
 const bucket = Cosmic().bucket({
   slug: BUCKET_SLUG,
   read_key: READ_KEY,
+  write_key: WRITE_KEY
 })
 
 const is404 = (error) => /not found/i.test(error.message)
@@ -29,8 +29,6 @@ export async function getPreviewPostBySlug(slug) {
     throw error
   }
 }
-
-
 
 export async function getAllBrandsWithSlug():Promise<Post[]>{
   const params = {
@@ -93,11 +91,13 @@ export async function addUserToCosmic(uid:string, email:string, username:string)
     content: '',
     metafields: [
       {
+        title: 'Username',
         key: 'username',
         type: 'text',
         value: username
       },
       {
+        title: "Email",
         key: 'email',
         type: 'text',
         value: email
@@ -133,11 +133,23 @@ export async function getUser(uid) {
 export async function updateUser({uid, birthday, isOver21}) {
   try {
     const params = {
-      slug: uid
+      slug: uid,
+      metafields: []
     };
 
-    if (birthday) params["birthday"] = birthday;
-    if (isOver21) params["is_over_21"] = isOver21;
+    if (birthday) params.metafields.push({
+      title: 'Birthday',
+      key: 'birthday',
+      type: 'number',
+      value: birthday
+    });
+    
+    if (isOver21) params.metafields.push({
+      title: 'Is Over 21',
+      key: 'is_over_21',
+      type: 'boolean',
+      value: isOver21
+    });
 
     const user = await bucket.editObjectMetafields(params);
 

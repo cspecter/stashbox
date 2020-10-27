@@ -22,7 +22,8 @@ function createAWSAPi() {
         checkIfCosmicUser,
         CosmicUser,
         AWSUser,
-        updateUserAge
+        updateUserAge,
+        signInAfterSignUp
     });
 
     function signUp({ email, password, username }) {
@@ -44,7 +45,17 @@ function createAWSAPi() {
         try {
             const user = await Auth.signIn(email, password);
             AWSUser = user;
-            await checkIfCosmicUser();
+            await getCosmicUser();
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async function signInAfterSignUp({ email, password }) {
+        try {
+            const user = await Auth.signIn(email, password);
+            AWSUser = user;
+            await registerCosmicUser();
         } catch (error) {
             throw new Error(error);
         }
@@ -54,7 +65,7 @@ function createAWSAPi() {
         try {
             const user = await Auth.currentAuthenticatedUser();
             AWSUser = user;
-            await checkIfCosmicUser();
+            await getCosmicUser();
         } catch (error) {
             console.log('error checking for user', error);
             return false
@@ -70,33 +81,49 @@ function createAWSAPi() {
         }
     }
 
-    async function sendVerification(attr: string) {
+    async function sendVerification(email: string) {
         try {
-            const verified = Auth.verifyCurrentUserAttribute(attr);
+            const verified = Auth.resendSignUp(email);
             return verified
         } catch (error) {
             throw new Error(error);
         }
     }
 
-    async function checkIfCosmicUser() {
+    async function getCosmicUser() {
         try {
             const cosmicUser = await getUser(AWSUser.username);
-            console.log("COSMIC USER", cosmicUser);
-            if (!cosmicUser) {
-                const newCosmicUser = await addUserToCosmic(AWSUser.username, AWSUser.attributes.email, UserName);
-                CosmicUser = newCosmicUser;
-            } else {
-                CosmicUser = cosmicUser
+            CosmicUser = cosmicUser;
+        } catch (e) {
+            throw new Error(e)
+        }
+    }
+
+    function checkIfCosmicUser() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await getCosmicUser();
+                resolve(true);
+            } catch (e) {
+                registerCosmicUser();
+                reject(e)
             }
-        } catch (error) {
+        })
+    }
+
+    async function registerCosmicUser() {
+        try {
+            const newCosmicUser = await addUserToCosmic(AWSUser.username, AWSUser.attributes.email, UserName);
+            CosmicUser = newCosmicUser;
+            console.log(newCosmicUser);
+        } catch(error) {
             throw new Error(error)
         }
     }
 
     async function updateUserAge({birthday, isOver21}) {
         try {
-            const cUser = updateUser({uid: CosmicUser.slug, birthday, isOver21})
+            const cUser = updateUser({uid: AWSUser.username, birthday, isOver21})
             CosmicUser = cUser;
         } catch(error) {
             throw new Error(error)

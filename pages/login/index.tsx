@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, Dimensions } from 'react-native';
 import { Button, Container, Content, Header, Left, Icon, Body, Title, Right, Item, Input, H1 } from 'native-base';
-import DayPickerInput from 'react-day-picker/DayPickerInput';
-import { DateUtils } from 'react-day-picker';
-import dateFnsFormat from 'date-fns/format';
-import dateFnsParse from 'date-fns/parse';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import styled from 'styled-components';
 import { AWS } from '../../lib/aws';
 import Grad1 from '../../components/backgrounds/grad1';
 import Logo from '../../components/design/Logo';
 import { validate } from 'validate.js';
+import { useRouter } from 'next/router'
 
 const { width, height } = Dimensions.get('window');
 
@@ -79,16 +78,15 @@ const styles = StyleSheet.create({
 const Login = ({ init }) => {
   const [mode, setMode] = useState(null);
   const [params, setparams] = useState({ email: null, password: null, username: null });
+  const [isOver21, setIsOver21] = useState(false);
   useEffect(() => {
-    if (!mode) {
-      AWS.current()
+    AWS.current()
         .then(u => {
-          setMode(init || !!u ? 0 : 0)
+          setMode(init || !!u ? 7 : 0)
         })
         .catch(e => {
           setMode(init || 0)
         })
-    }
   });
 
   function changeMode(n: number) {
@@ -103,15 +101,16 @@ const Login = ({ init }) => {
 
   async function onConfirmed() {
     try {
-      await AWS.signIn(params);
+      await AWS.signInAfterSignUp(params);
       setMode(3);
     } catch (error) {
       console.log(error);
     }
   }
 
-  function onAgeConfirm() {
-
+  function onAgeConfirm(val) {
+    setIsOver21(val);
+    setMode(4);
   }
 
   const renderMode = () => {
@@ -124,6 +123,14 @@ const Login = ({ init }) => {
         return <ConfirmEmail email={params.email} onConfirmed={onConfirmed} />
       case 3: // Confirm age on signup
         return <ConfirmAge onAgeConfirm={onAgeConfirm} />
+      case 4: //Sign Up completion
+        return <SignUpFinish isOver21={isOver21} />
+      case 5: // Sign in form
+        return <SignInForm onChange={changeMode} />
+      case 6: // Forgotten password
+        return <ForgottenPasswordForm onChange={changeMode} />
+      case 7: // Logged In
+        return <LoggedIn onChange={changeMode} />
       default:
         return <Container style={styles.container} />;
     }
@@ -301,6 +308,11 @@ const ConfirmEmail = ({ email, onConfirmed }) => {
     }
   }
 
+  function resendVerification() {
+    AWS.sendVerification(email);
+    setError("We just resent your verification code. Please check your email.")
+  }
+
   return (
     <Container style={styles.container}>
       <Header iosBarStyle={"light-content"} transparent>
@@ -333,7 +345,7 @@ const ConfirmEmail = ({ email, onConfirmed }) => {
               {error}
             </Text>
             <div style={{ flex: 1 }}>
-              <Button transparent>
+              <Button transparent onPress={resendVerification} >
                 <Text>Resend verification email.</Text>
               </Button>
             </div>
@@ -357,22 +369,9 @@ const ConfirmEmail = ({ email, onConfirmed }) => {
 const ConfirmAge = ({ onAgeConfirm }) => {
   const [date, setDate] = useState(new Date());
   const [error, setError] = useState("");
-  const FORMAT = 'MM/dd/yyyy';
 
   function updateDate(newDate) {
     setDate(newDate);
-  }
-
-  function parseDate(str, format, locale) {
-    const parsed = dateFnsParse(str, format, new Date(), { locale });
-    if (DateUtils.isDate(parsed)) {
-      return parsed;
-    }
-    return undefined;
-  }
-
-  function formatDate(date, format, locale) {
-    return dateFnsFormat(date, format, { locale });
   }
 
   async function submitAge() {
@@ -381,9 +380,9 @@ const ConfirmAge = ({ onAgeConfirm }) => {
     const isOver21 = diff > 662840281498;
     try {
       await AWS.updateUserAge({ birthday: date.getTime(), isOver21 })
-
+      onAgeConfirm(isOver21);
     } catch (error) {
-
+      console.log(error);
     }
   }
 
@@ -399,29 +398,37 @@ const ConfirmAge = ({ onAgeConfirm }) => {
       <Content contentContainerStyle={styles.content}>
         <Grid style={styles.grid}>
           <Row style={styles.center2}>
-          <Text>
+            <Text style={{ textAlign: "center" }}>
               <H1>We need to see your confirm your age</H1>
             </Text>
-            <img src="/id.svg" style={{ width: 198, height: "auto" }} />
-            <div style={{ flex: 1 }}>
-              <Text style={{ textAlign: 'center', paddingBottom: 30 }}>
+            <img src="/id.svg" style={{ width: 100, height: "auto", paddingTop: 30 }} />
+            <div style={{ flex: 1, marginTop: 30 }}>
+              <Text style={{ textAlign: 'center', paddingBottom: 10 }}>
                 You need to be over 21 to view some content on Stashbox. Please enter you birthday so we can confirm your age.
               </Text>
             </div>
-            <FormBox>
-              <DayPickerInput
-              formatDate={formatDate}
-              format={FORMAT}
-              parseDate={parseDate}
-              placeholder={`${dateFnsFormat(new Date(), FORMAT)}`}
-              onDayChange={date => setDate(date)} />
-            </FormBox>
+            <DatePicker
+              selected={date}
+              onChange={date => updateDate(date)}
+              popperClassName="some-custom-class"
+              popperPlacement="top-end"
+              popperModifiers={{
+                offset: {
+                  enabled: true,
+                  offset: "5px, 10px"
+                },
+                preventOverflow: {
+                  enabled: true,
+                  escapeWithReference: false,
+                  boundariesElement: "viewport"
+                }
+              }}
+            />
             <Text style={{ flex: 1, textAlign: 'center', color: 'red', height: 60, paddingTop: 10 }}>
               {error}
             </Text>
           </Row>
           <Row style={styles.bottom}>
-
             <div style={{ flex: 1, width: "100%" }}>
               <Button block dark rounded bordered onPress={() => submitAge()} >
                 <Text>CONFIRM MY AGE</Text>
@@ -434,3 +441,261 @@ const ConfirmAge = ({ onAgeConfirm }) => {
   )
 
 }
+
+// Final Sign Up Confimation
+
+const SignUpFinish = ({ isOver21 }) => {
+  const router = useRouter()
+  const message = isOver21 ? "Thanks for confirming that you are over 21. You are ready to go." : "You are not quite 21 yet. There is still a lot of enjoy on Stashbox.";
+
+  function complete() {
+    router.push("/")
+  }
+
+  return (
+    <Container style={styles.container}>
+      <Header iosBarStyle={"light-content"} transparent>
+        <Left />
+        <Body>
+          <Title>All signed up</Title>
+        </Body>
+        <Right />
+      </Header>
+      <Content contentContainerStyle={styles.content}>
+        <Grid style={styles.grid}>
+          <Row style={styles.center2}>
+            <Text style={{ textAlign: "center" }}>
+              <H1>Welcome to Stashbox!</H1>
+            </Text>
+            <img src="/stashbox_icon.svg" style={{ width: 100, height: "auto", paddingTop: 30 }} />
+            <div style={{ flex: 1, marginTop: 30 }}>
+              <Text style={{ textAlign: 'center', paddingBottom: 10 }}>
+                {message}
+              </Text>
+            </div>
+          </Row>
+          <Row style={styles.bottom}>
+            <div style={{ flex: 1, width: "100%" }}>
+              <Button block dark rounded bordered onPress={() => complete()} >
+                <Text>LET'S GO!</Text>
+              </Button>
+            </div>
+          </Row>
+        </Grid>
+      </Content>
+    </Container>
+  )
+}
+
+// Sign in form
+
+const SignInForm = ({ onChange }) => {
+  const router = useRouter()
+  const [params, setParams] = useState({ email: null, password: null });
+  const [error, setError] = useState("");
+
+  function updateEmail(email: string) {
+    let p = params;
+    p["email"] = email;
+    setParams(p);
+    const validationResult = validate({ from: email }, constraints);
+    setError(!!validationResult ? validationResult.from[0] : "");
+  }
+
+  function updatePassword(password: string) {
+    let p = params;
+    p["password"] = password;
+    setParams(p);
+  }
+
+  async function signin() {
+    let p = params;
+    if (!p.email) {
+      setError("Please enter an email address.")
+    } else if (!p.password) {
+      setError("Please enter a password.")
+    } else {
+      setError("");
+      const user = await AWS.signIn(p);
+      router.push("/")
+    }
+  }
+
+  function forgot() {
+    onChange(6)
+  }
+
+  return (
+    <Container style={styles.container}>
+      <Header iosBarStyle={"light-content"} transparent>
+        <Left>
+          <Button transparent onPress={() => onChange(0)}>
+            <Icon name='arrow-back' />
+          </Button>
+        </Left>
+        <Body>
+          <Title>Sign in</Title>
+        </Body>
+        <Right />
+      </Header>
+      <Content contentContainerStyle={styles.content}>
+        <Grid style={styles.grid}>
+          <Row style={styles.center}>
+            <Text>
+              <H1>Welcome back!</H1>
+            </Text>
+          </Row>
+          <Row style={styles.center2}>
+            <FormBox>
+              <Item rounded style={styles.item}>
+                <Input
+                  placeholder='Email'
+                  onChangeText={text => updateEmail(text)}
+                />
+              </Item>
+              <Item rounded style={styles.item}>
+                <Input
+                  placeholder='Enter password'
+                  secureTextEntry={true}
+                  onChangeText={text => updatePassword(text)}
+                />
+              </Item>
+            </FormBox>
+            <Text style={{ flex: 1, textAlign: 'center', color: 'red', height: 60, paddingTop: 10 }}>
+              {error}
+            </Text>
+          </Row>
+          <Row style={styles.bottom}>
+            <div style={{ flex: 1 }}>
+              <Button transparent onPress={forgot} >
+                <Text>Forgot my password.</Text>
+              </Button>
+            </div>
+            <div style={{ flex: 1, width: "100%" }}>
+              <Button block dark rounded bordered onPress={() => signin()} >
+                <Text>CREATE ACCOUNT</Text>
+              </Button>
+            </div>
+          </Row>
+        </Grid>
+      </Content>
+    </Container>
+  )
+}
+
+// Forgotten password form
+// TODO: Hook up the forgotten password form and confirmation pages
+
+const ForgottenPasswordForm = ({onChange}) => {
+  const [email, setEmail] = useState(null);
+  const [error, setError] = useState("");
+
+  function updateEmail(email: string) {
+    setEmail(email);
+    const validationResult = validate({ from: email }, constraints);
+    setError(!!validationResult ? validationResult.from[0] : "");
+  }
+
+  async function signin() {
+    if (!email) {
+      setError("Please enter an email address.")
+    } else {
+      setError("");
+      const user = await AWS.signIn(p);
+    }
+  }
+
+  function forgot() {
+    onChange(6)
+  }
+
+  return (
+    <Container style={styles.container}>
+      <Header iosBarStyle={"light-content"} transparent>
+        <Left>
+          <Button transparent onPress={() => onChange(5)}>
+            <Icon name='arrow-back' />
+          </Button>
+        </Left>
+        <Body>
+          <Title>Sign in</Title>
+        </Body>
+        <Right />
+      </Header>
+      <Content contentContainerStyle={styles.content}>
+        <Grid style={styles.grid}>
+          <Row style={styles.center}>
+            <Text>
+              <H1>Welcome back!</H1>
+            </Text>
+          </Row>
+          <Row style={styles.center2}>
+            <FormBox>
+              <Item rounded style={styles.item}>
+                <Input
+                  placeholder='Email'
+                  onChangeText={text => updateEmail(text)}
+                />
+              </Item>
+              <Item rounded style={styles.item}>
+                <Input
+                  placeholder='Enter password'
+                  secureTextEntry={true}
+                  onChangeText={text => updatePassword(text)}
+                />
+              </Item>
+            </FormBox>
+            <Text style={{ flex: 1, textAlign: 'center', color: 'red', height: 60, paddingTop: 10 }}>
+              {error}
+            </Text>
+          </Row>
+          <Row style={styles.bottom}>
+            <div style={{ flex: 1 }}>
+              <Button transparent onPress={forgot} >
+                <Text>Forgot my password.</Text>
+              </Button>
+            </div>
+            <div style={{ flex: 1, width: "100%" }}>
+              <Button block dark rounded bordered onPress={() => signin()} >
+                <Text>CREATE ACCOUNT</Text>
+              </Button>
+            </div>
+          </Row>
+        </Grid>
+      </Content>
+    </Container>
+  )
+}
+
+// Logged In
+
+const LoggedIn = ({onChange}) => {
+
+  function name() {
+    const user = AWS.CosmicUser;
+    console.log(user);
+  }
+
+  return (
+    <Container style={styles.container}>
+      <Content contentContainerStyle={styles.content}>
+        <Grid style={styles.grid}>
+          <Row style={styles.center}>
+            <Logo width={240} tone="color" />
+            <Text style={{marginTop: 30}} >
+              <H1>Check your email</H1>
+            </Text>
+          </Row>
+          <Row style={styles.bottom}>
+            <div style={{ flex: 1, width: "100%" }}>
+              <Button block rounded onPress={() => onChange(1)} >
+                <Text>LOG OUT</Text>
+              </Button>
+            </div>
+          </Row>
+        </Grid>
+      </Content>
+    </Container>
+  )
+}
+

@@ -1,4 +1,4 @@
-export default function (props) {
+export default function Logo (props) {
 
     function logo() {
         switch (props.tone) {
