@@ -121,7 +121,7 @@ export async function getUser(uid) {
   try {
     const user = await bucket.getObject({
       slug: uid,
-      props: 'slug,title,username,zip_code,email, birthday, is_over_21' // get only what you need
+      //props: 'slug,title,username,zip_code,email, birthday, is_over_21' // get only what you need
     });
 
     return user
@@ -138,7 +138,7 @@ export async function updateUser({uid, birthday, isOver21}) {
     };
 
     if (birthday) params.metafields.push({
-      title: 'Birthday',
+      title: 'birthday',
       key: 'birthday',
       type: 'number',
       value: birthday
@@ -147,8 +147,9 @@ export async function updateUser({uid, birthday, isOver21}) {
     if (isOver21) params.metafields.push({
       title: 'Is Over 21',
       key: 'is_over_21',
-      type: 'boolean',
-      value: isOver21
+      type: 'switch',
+      value: isOver21,
+      options: "true,false"
     });
 
     const user = await bucket.editObjectMetafields(params);

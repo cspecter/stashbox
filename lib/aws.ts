@@ -1,5 +1,5 @@
 // Configure Amplify
-import Amplify, { Auth } from 'aws-amplify';
+import Amplify, { withSSRContext } from 'aws-amplify';
 import aws_exports from '../aws-exports';
 
 // in this way you are only importing Auth and configuring it.
@@ -8,10 +8,13 @@ Amplify.configure({ ...aws_exports, ssr: true });
 import { addUserToCosmic, getUser, updateUser } from './api';
 
 function createAWSAPi() {
+    const { Auth } = withSSRContext();
 
     let AWSUser;
     let CosmicUser;
     let UserName;
+
+    current();
 
     return Object.freeze({
         signUp,
@@ -20,10 +23,11 @@ function createAWSAPi() {
         verifyEmail,
         sendVerification,
         checkIfCosmicUser,
-        CosmicUser,
-        AWSUser,
+        cosmicUser,
+        getAWSUser,
         updateUserAge,
-        signInAfterSignUp
+        signInAfterSignUp,
+        signOut
     });
 
     function signUp({ email, password, username }) {
@@ -51,6 +55,15 @@ function createAWSAPi() {
         }
     }
 
+    async function signOut() {
+        try {
+            await Auth.signOut();
+        } catch(error) {
+            throw new Error(error)
+        }
+        
+    }
+
     async function signInAfterSignUp({ email, password }) {
         try {
             const user = await Auth.signIn(email, password);
@@ -66,6 +79,8 @@ function createAWSAPi() {
             const user = await Auth.currentAuthenticatedUser();
             AWSUser = user;
             await getCosmicUser();
+            console.log(AWSUser, CosmicUser);
+            return user
         } catch (error) {
             console.log('error checking for user', error);
             return false
@@ -125,9 +140,18 @@ function createAWSAPi() {
         try {
             const cUser = updateUser({uid: AWSUser.username, birthday, isOver21})
             CosmicUser = cUser;
+            console.log("Updated User Age", cUser, birthday, isOver21)
         } catch(error) {
             throw new Error(error)
         }
+    }
+
+    function cosmicUser() {
+        return CosmicUser
+    }
+
+    function getAWSUser() {
+        return AWSUser
     }
 
 }

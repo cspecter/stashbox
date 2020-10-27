@@ -80,13 +80,15 @@ const Login = ({ init }) => {
   const [params, setparams] = useState({ email: null, password: null, username: null });
   const [isOver21, setIsOver21] = useState(false);
   useEffect(() => {
-    AWS.current()
-        .then(u => {
-          setMode(init || !!u ? 7 : 0)
-        })
-        .catch(e => {
-          setMode(init || 0)
-        })
+    if (!mode) {
+      AWS.current()
+      .then(u => {
+        setMode(init || !!u ? 7 : 0)
+      })
+      .catch(e => {
+        setMode(init || 0)
+      })
+    }
   });
 
   function changeMode(n: number) {
@@ -586,7 +588,7 @@ const SignInForm = ({ onChange }) => {
 // Forgotten password form
 // TODO: Hook up the forgotten password form and confirmation pages
 
-const ForgottenPasswordForm = ({onChange}) => {
+const ForgottenPasswordForm = ({ onChange }) => {
   const [email, setEmail] = useState(null);
   const [error, setError] = useState("");
 
@@ -669,11 +671,21 @@ const ForgottenPasswordForm = ({onChange}) => {
 
 // Logged In
 
-const LoggedIn = ({onChange}) => {
+const LoggedIn = ({ onChange }) => {
 
   function name() {
-    const user = AWS.CosmicUser;
-    console.log(user);
+    const user = AWS.cosmicUser();
+    console.log(user.object.metadata.username);
+    return user.object.metadata.username
+  }
+
+  async function logOut() {
+    try {
+      await AWS.signOut();
+      onChange(0);
+    } catch(error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -682,13 +694,13 @@ const LoggedIn = ({onChange}) => {
         <Grid style={styles.grid}>
           <Row style={styles.center}>
             <Logo width={240} tone="color" />
-            <Text style={{marginTop: 30}} >
-              <H1>Check your email</H1>
+            <Text style={{ marginTop: 30 }} >
+              <H1>Welcome back {name()}</H1>
             </Text>
           </Row>
           <Row style={styles.bottom}>
             <div style={{ flex: 1, width: "100%" }}>
-              <Button block rounded onPress={() => onChange(1)} >
+              <Button block rounded onPress={logOut} >
                 <Text>LOG OUT</Text>
               </Button>
             </div>
