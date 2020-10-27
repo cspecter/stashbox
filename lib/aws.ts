@@ -5,7 +5,17 @@ import aws_exports from '../aws-exports';
 // in this way you are only importing Auth and configuring it.
 Amplify.configure({ ...aws_exports, ssr: true });
 
-import { addUserToCosmic, getUser, updateUser } from './api';
+import Cosmic from 'cosmicjs';
+
+const BUCKET_SLUG = process.env.NEXT_PUBLIC_COSMIC_BUCKET_SLUG;
+const READ_KEY = process.env.NEXT_PUBLIC_COSMIC_READ_KEY;
+const WRITE_KEY = process.env.NEXT_PUBLIC_COSMIC_WRITE_KEY;
+
+const bucket = Cosmic().bucket({
+  slug: BUCKET_SLUG,
+  read_key: READ_KEY,
+  write_key: WRITE_KEY
+})
 
 function createAWSAPi() {
     const { Auth } = withSSRContext();
@@ -153,6 +163,85 @@ function createAWSAPi() {
     function getAWSUser() {
         return AWSUser
     }
+
+    // Cosmic methods
+
+    async function addUserToCosmic(uid:string, email:string, username:string) {
+        const params = {
+          title: uid,
+          type_slug: 'users',
+          content: '',
+          metafields: [
+            {
+              title: 'Username',
+              key: 'username',
+              type: 'text',
+              value: username
+            },
+            {
+              title: "Email",
+              key: 'email',
+              type: 'text',
+              value: email
+            }
+          ],
+          options: {
+            slug_field: uid
+          }
+        };
+      
+        try {
+          const data = bucket.addObject(params);
+          return data
+        } catch (error) {
+          throw new Error(error);
+        }
+      
+      }
+      
+    async function getUser(uid) {
+        try {
+          const user = await bucket.getObject({
+            slug: uid,
+            //props: 'slug,title,username,zip_code,email, birthday, is_over_21' // get only what you need
+          });
+      
+          return user
+        } catch (error) {
+          throw new Error(error)
+        }
+      }
+      
+      async function updateUser({uid, birthday, isOver21}) {
+        try {
+          const params = {
+            slug: uid,
+            metafields: []
+          };
+      
+          if (birthday) params.metafields.push({
+            title: 'birthday',
+            key: 'birthday',
+            type: 'number',
+            value: birthday
+          });
+          
+          if (isOver21) params.metafields.push({
+            title: 'Is Over 21',
+            key: 'is_over_21',
+            type: 'switch',
+            value: isOver21,
+            options: "true,false"
+          });
+      
+          const user = await bucket.editObjectMetafields(params);
+      
+          return user
+      
+        } catch (error) {
+          throw new Error(error);
+        }
+      }
 
 }
 

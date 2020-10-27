@@ -10,6 +10,7 @@
     "build": "next build"
   },
   "dependencies": {
+    "@expo/match-media": "^0.0.0-beta.2",
     "@expo/vector-icons": "^10.2.1",
     "aws-amplify": "^3.3.4",
     "cosmicjs": "^3.3.1",
@@ -27,6 +28,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.3.tar.gz",
     "react-native-svg": "^12.1.0",
     "react-native-web": "^0.14.0",
+    "react-responsive": "^8.1.0",
     "remark": "^13.0.0",
     "remark-html": "^13.0.1",
     "styled-components": "^5.2.0",

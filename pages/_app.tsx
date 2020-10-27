@@ -7,6 +7,9 @@ import aws_exports from '../aws-exports';
 // in this way you are only importing Auth and configuring it.
 Amplify.configure({ ...aws_exports, ssr: true });
 
+// Media Query
+import '@expo/match-media'
+
 // This default export is required in a new `pages/_app.js` file.
 export default function MyApp({ Component, pageProps }) {
   return <Component {...pageProps} />
