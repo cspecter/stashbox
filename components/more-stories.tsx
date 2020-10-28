@@ -35,10 +35,12 @@ const styles = StyleSheet.create({
     },
     headline: {
         fontSize: 24,
-        fontWeight: '400'
+        fontWeight: '400',
+        marginBottom: 28
     },
     text: {
         fontSize: 16,
+        margin: 8
     },
 });
 
