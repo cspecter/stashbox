@@ -33,3 +33,4 @@ web-build/
 .pnp.js
 # @end @expo/next-adapter
 /.env.local
+/components/.env.local
