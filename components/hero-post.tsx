@@ -5,13 +5,21 @@ import { StyleSheet, Text, View } from 'react-native';
 
 const HeroPost = ({ title, slug }: { title: string, slug: string }) => {
     return (
-        <View>
+        <View style={[styles.container, styles.myBorder]}>
+            {/* <View style={{flex:3}}></View> */}
 
-            <Text style={styles.text}>
-                <Link as={`/brands/${slug}`} href="/brands/[slug]">
-                    <a className="hover:underline">{title}</a>
-                </Link>
-            </Text>
+            <View style={[styles.inner, styles.myBorder]}>
+                
+                <Text style={[styles.text]}>
+                  
+                    <Link as={`/brands/${slug}`} href="/brands/[slug]">
+                        <a className="hover:underline">{title}</a>
+      
+                    </Link>
+                </Text>
+            </View>
+
+            {/* <View style={{flex:3}}></View> */}
 
         </View>
 
@@ -19,8 +27,28 @@ const HeroPost = ({ title, slug }: { title: string, slug: string }) => {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 2,
+        alignItems:'center',
+        justifyContent:'center',
+        backgroundColor: 'green'
+
+    },
+    inner: {
+        backgroundColor: 'yellow',
+        alignContent:'center'
+      
+    },
+    myBorder: {
+        borderColor: 'black',
+        borderWidth: 2,
+    },
     text: {
-        fontSize: 48,
+        flex: 1,
+        align:'center',
+        fontSize: 36,
+        backgroundColor: 'yellow',
+
     },
 });
 
