@@ -3,7 +3,7 @@ import React , { useEffect, useState} from 'react';
 import { GetStaticProps, GetStaticPaths, GetStaticPropsContext , GetStaticPropsResult} from 'next'
 import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View ,Image} from 'react-native';
 
 import { getAllBrandsWithSlug, getBrandAndMoreBrands } from '../../lib/api'
 import markdownToHtml from '../../lib/markdownToHtml'
@@ -11,7 +11,7 @@ import Header from '../../components/head'
 import MoreStories from '../../components/more-stories'
 import {  Post, Posts, Preview } from '../../interfaces';
 
-
+ 
 
 type BrandType = Post & Posts;
 
@@ -25,7 +25,15 @@ const Brand = ({ post, morePosts }: {post:Post, morePosts: Posts}) => {
     return (
         <View>
             <Header />
-            <Text style={styles.headline}>{title}</Text>
+            <View 
+                style={styles.container}>
+                <Image 
+                    style={styles.logo}
+                    source={post.metadata.logo.imgix_url}>
+                </Image>
+                <Text style={styles.headline}>{title}</Text>
+            </View>
+          
             { morePosts && morePosts.length > 0 && <MoreStories allPosts={morePosts} />}
         </View>
     );
@@ -37,7 +45,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: "yellow",
-        border: "1 solid black"
+        border: "1 solid black",
+        padding: 12
     },
     headline: {
         fontSize: 32,
@@ -45,6 +54,11 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 16,
     },
+    logo: {
+        width: 100,
+        height: 100,
+
+      },
 });
 
 

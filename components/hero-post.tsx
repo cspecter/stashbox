@@ -1,6 +1,6 @@
 
 import Link from 'next/link'
-import { StyleSheet, Text, View } from 'react-native';
+import { View, StyleSheet, Text, Image } from 'react-native';
 
 
 const HeroPost = ({ title, slug }: { title: string, slug: string }) => {

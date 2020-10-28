@@ -5,7 +5,7 @@ import { StyleSheet, View, Text } from 'react-native';
 
 export default function Head() {
     return (
-        <View>
+        <View style={styles.container}>
             <Text style={styles.header}>StashBox</Text>
         </View>
     )
@@ -14,8 +14,15 @@ export default function Head() {
 
 const styles = StyleSheet.create({
     header: {
-        marginTop: 60,
+       fontSize: 24
+    },
+    container: {
+        flex: 1,
+        borderColor: 'black',
+        borderWidth: 2,
+        backgroundColor: 'red'
     }
+
 });
 
 
