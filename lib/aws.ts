@@ -37,7 +37,8 @@ function createAWSAPi() {
         getAWSUser,
         updateUserAge,
         signInAfterSignUp,
-        signOut
+        signOut,
+        isSignedIn
     });
 
     function signUp({ email, password, username }) {
@@ -89,11 +90,10 @@ function createAWSAPi() {
             const user = await Auth.currentAuthenticatedUser();
             AWSUser = user;
             await getCosmicUser();
-            console.log(AWSUser, CosmicUser);
-            return user
+            //console.log(AWSUser, CosmicUser);
+            return CosmicUser
         } catch (error) {
-            console.log('error checking for user', error);
-            return false
+            throw new Error(error)
         }
     }
 
@@ -162,6 +162,18 @@ function createAWSAPi() {
 
     function getAWSUser() {
         return AWSUser
+    }
+
+    async function isSignedIn() {
+        if (CosmicUser) {
+            return CosmicUser
+        } else {
+            try {
+                return await current()
+            } catch (error) {
+                throw new Error(error)
+            }
+        }
     }
 
     // Cosmic methods

@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import styled from 'styled-components';
 import { AWS } from '../../lib/aws';
-import Grad1 from '../../components/backgrounds/grad1';
+import Backgrounds from '../../components/backgrounds/Backgrounds';
 import Logo from '../../components/design/Logo';
 import { validate } from 'validate.js';
 import { useRouter } from 'next/router'
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const Login = ({ init }) => {
+const Login = ({ init, previousPage }) => {
   const [mode, setMode] = useState(null);
   const [params, setparams] = useState({ email: null, password: null, username: null });
   const [isOver21, setIsOver21] = useState(false);
@@ -128,7 +128,7 @@ const Login = ({ init }) => {
       case 4: //Sign Up completion
         return <SignUpFinish isOver21={isOver21} />
       case 5: // Sign in form
-        return <SignInForm onChange={changeMode} />
+        return <SignInForm onChange={changeMode} previousPage={previousPage} />
       case 6: // Forgotten password
         return <ForgottenPasswordForm onChange={changeMode} />
       case 7: // Logged In
@@ -139,9 +139,9 @@ const Login = ({ init }) => {
   }
 
   return (
-    <Grad1>
+    <Backgrounds background={"Grad1"} >
       {renderMode()}
-    </Grad1>
+    </Backgrounds>
   )
 }
 
@@ -491,7 +491,7 @@ const SignUpFinish = ({ isOver21 }) => {
 
 // Sign in form
 
-const SignInForm = ({ onChange }) => {
+const SignInForm = ({ onChange, previousPage }) => {
   const router = useRouter()
   const [params, setParams] = useState({ email: null, password: null });
   const [error, setError] = useState("");
@@ -519,7 +519,7 @@ const SignInForm = ({ onChange }) => {
     } else {
       setError("");
       const user = await AWS.signIn(p);
-      router.push("/")
+      router.push(previousPage || "/")
     }
   }
 
