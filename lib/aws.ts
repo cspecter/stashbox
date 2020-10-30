@@ -93,6 +93,7 @@ function createAWSAPi() {
             //console.log(AWSUser, CosmicUser);
             return CosmicUser
         } catch (error) {
+            console.log(error);
             throw new Error(error)
         }
     }

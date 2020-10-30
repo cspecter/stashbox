@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Desktop, Tablet, Mobile, Default, TabletOrDesktop } from '../../components/MediaQueries'
 import { StyleSheet, Text, Dimensions, Platform, Image, View, ScrollView, Switch } from 'react-native';
 import { Button, Container, Content, Header, Left, Icon, Body, Title, Right, Item, Input, H1 } from 'native-base';
@@ -7,11 +7,11 @@ import * as ImagePicker from 'expo-image-picker';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Cropper from 'react-easy-crop';
 import WebCamera from './WebCamera';
-import Grad2 from '../../components/backgrounds/Grad2';
 import Backgrounds from '../../components/backgrounds/Backgrounds';
 import styled from 'styled-components';
 import { useRouter } from 'next/router'
-import { AWS } from '../../lib/aws';
+import { AWS, imageChecker } from '../../lib';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 const { width, height } = Dimensions.get('window');
 
@@ -86,6 +86,11 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         flexDirection: 'column'
+    },
+    previewItem: {
+        maxWidth: 350,
+        maxHeight: 350,
+        flex: 1
     }
 });
 
@@ -113,8 +118,26 @@ const ContentHolder = styled.div({
 
 const PreviewItemHolder = styled.div({
     width: 350,
-    height: 'auto',
-    padding: 10
+    height: 350,
+    padding: 10,
+    display: "flex",
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'rgba(200,200,200,0.25)'
+});
+
+const PreviewControlsHolder = styled.div({
+    paddingTop: 10
+});
+
+const CropControls = styled.div({
+    width: 376,
+    height: 80,
+    position: 'absolute',
+    top: 40,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: 'center',
 });
 
 const CreatePost = () => {
@@ -123,6 +146,7 @@ const CreatePost = () => {
     const [user, setUser] = useState();
     const [mode, setMode] = useState(0);
     const [selectionType, setSelectionType] = useState();
+    const [currIndex, setCurrIndex] = useState();
 
     useEffect(() => {
         if (!user) {
@@ -131,6 +155,7 @@ const CreatePost = () => {
                     setUser(u)
                 })
                 .catch(error => {
+                    console.log(error);
                     router.push('/login')
                 })
         }
@@ -147,6 +172,7 @@ const CreatePost = () => {
         })();
     }, []);
 
+
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -156,21 +182,54 @@ const CreatePost = () => {
             quality: 1,
         });
 
-        console.log(result);
-
         if (!result.cancelled) {
-            setMedia(result.selected);
+            let res = result.selected;
+            for (let i = 0; i < res.length; i++) {
+                if (isImage(res[i].uri)) {
+                    res[i]['desc'] = imageChecker(res[i].width, res[i].height)
+                }
+            }
+
+            setMedia(res);
             setSelectionType('file');
             setMode(1);
         }
     };
+
+    const [view, setView] = useState(<Landing onPick={pickImage} />);
+
+    function reset() {
+        setMedia(null);
+        setMode(0);
+    }
+
+    function onConfirm(list) {
+        setMedia(list);
+        setCurrIndex(0);
+        setMode(3);
+    }
+
+    function processMedia() {
+        const m = media;
+        return <SubmissionForm
+            media={m[currIndex]}
+            onReset={reset}
+            onConfirm={postMedia}
+        />
+    }
+
+    function postMedia() {
+
+    }
 
     function renderMode() {
         switch (mode) {
             case 0:
                 return <Landing onPick={pickImage} />
             case 1:
-                return <SelectionPreview list={media} />
+                return <SelectionPreview list={media} onConfirm={onConfirm} onReset={reset} />
+            case 3:
+                return processMedia()
         }
     }
 
@@ -233,7 +292,8 @@ const Landing = ({ onPick }) => {
 
 // Selection preview
 
-const SelectionPreview = ({ list }) => {
+const SelectionPreview = ({ list, onConfirm, onReset }) => {
+    const [removes, setRemoves] = useState([]);
 
     function buildPreview() {
         let p = [];
@@ -244,6 +304,7 @@ const SelectionPreview = ({ list }) => {
                     uri={m.uri}
                     index={i}
                     onSwitch={onSwitch}
+                    message={m.desc && m.desc.message}
                     key={m.uri}
                 />
             )
@@ -251,21 +312,47 @@ const SelectionPreview = ({ list }) => {
         return p
     }
 
-    function onSwitch() {
+    function onSwitch(val, i) {
+        let a = removes;
+        if (val && a.indexOf(i) > -1) {
+            if (a.length === 1) {
+                setRemoves([])
+            } else {
+                setRemoves(a.splice(a.indexOf(i), 1))
+            }
+        } else if (a.indexOf(i) === -1) {
+            a.push(i);
+            setRemoves(a)
+        }
+    }
 
+    function confirm() {
+        let arr = list;
+        let r = removes;
+        let final = [];
+        for (let i = 0; i < list.length; i++) {
+            if (r.indexOf(i) === -1) {
+                final.push(arr[i])
+            }
+        }
+        onConfirm(final);
     }
 
     return (
         <Container style={styles.container}>
             <Header iosBarStyle={"light-content"} transparent>
                 <Left>
-
+                    <Button transparent onPress={onReset}>
+                        <Icon name='close' />
+                    </Button>
                 </Left>
                 <Body>
-                    <Title>Create a post</Title>
+                    <Title>Confirm selection</Title>
                 </Body>
                 <Right>
-
+                    <Button transparent onPress={confirm}>
+                        <Icon name='checkmark' />
+                    </Button>
                 </Right>
             </Header>
             <Content contentContainerStyle={styles.content}>
@@ -278,58 +365,167 @@ const SelectionPreview = ({ list }) => {
 
 }
 
-const PreviewItem = ({ uri, index, onSwitch }) => {
-    if (!isImage(uri) || !isVideo(uri)) {
+const PreviewItem = ({ uri, index, onSwitch, message }) => {
+    const [isEnabled, setIsEnabled] = useState(true);
+
+    function onToggle(val) {
+        setIsEnabled(val);
+        onSwitch(val, index)
+    }
+
+    if (!isImage(uri) && !isVideo(uri)) {
         return <div />
     }
 
     return (
         <PreviewItemHolder>
             {isImage(uri) ?
-                <Image source={{ uri }} style={{ height: "auto", width: "100%" }} /> :
+                <Image source={{ uri }} style={styles.previewItem} /> :
                 <Video
                     source={{ uri }}
                     rate={1.0}
                     volume={1.0}
                     isMuted={true}
-                    resizeMode="cover"
-                    style={{ height: "auto", width: "100%" }}
+                    style={styles.previewItem}
+                    shouldPlay
+                    isLooping
+                    resizeMode={Video.RESIZE_MODE_CONTAIN}
                 />
             }
+            <PreviewControlsHolder>
+                <Grid>
+                    <Col>
+                        <Text>
+                            Use this media
+                        </Text>
+                    </Col>
+                    <Col style={{ alignItems: 'flex-end' }}>
+                        <Switch
+                            onValueChange={val => { onToggle(val) }}
+                            value={isEnabled}
+                        />
+                    </Col>
+                </Grid>
+                {message && <Text style={{ color: 'red', marginTop: 10 }}>
+                    {message}
+                </Text>}
+            </PreviewControlsHolder>
         </PreviewItemHolder>
     )
 }
 
 // Cropper
 
+const CropMedia = ({ media }) => {
+    const [crop, setCrop] = useState({ x: 0, y: 0 })
+    const [zoom, setZoom] = useState(1)
+    const [aspect, setAspect] = useState(1)
+
+    const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+        console.log(croppedArea, croppedAreaPixels)
+    }, [])
+
+    return (
+        <View style={{ width, height }} >
+            <CropControls>
+                <Button transparent large>
+                    <Icon
+                        type="MaterialIcons"
+                        name='crop-square'
+                        fontSize={40} />
+                </Button>
+                <Button transparent large>
+                    <Icon
+                        type="MaterialIcons"
+                        name="crop-5-4"
+                        fontSize={40} />
+                </Button>
+                <Button transparent large>
+                    <Icon
+                        type="MaterialIcons"
+                        name="crop-portrait"
+                        fontSize={40} />
+                </Button>
+            </CropControls>
+            <Cropper
+                image={media.uri}
+                crop={crop}
+                zoom={zoom}
+                aspect={aspect}
+                onCropChange={setCrop}
+                onCropComplete={onCropComplete}
+                onZoomChange={setZoom}
+            />
+        </View>
+    )
+}
 
 // Post creation and submission form
 
-const SubmissionForm = ({ image }) => {
-    return (
-        <ScrollView
-            contentContainerStyle={{
-                //flexGrow: 1,
-                //justifyContent: 'space-between',
-                //flex: 1,
-            }}>
-            <ImageHolder>
-                {!image ?
-                    <div style={{ flex: 1, height: "100%" }}>
-                        <Button block dark rounded bordered onPress={pickImage} >
-                            <Text>SELECT MEDIA</Text>
-                        </Button>
-                    </div> :
-                    <Image source={{ uri: image }} style={{ height: "100%", width: "100%" }} />
-                }
-            </ImageHolder>
-            <SettingsHolder>
-                <Item underline>
-                    <Input placeholder='Enter message' />
-                </Item>
-            </SettingsHolder>
+const SubmissionForm = ({ media, onReset, onConfirm }) => {
+    const [item, setItem] = useState(media);
+    const [mode, setMode] = useState(0);
+    const [title, setTitle] = useState("Make a post")
 
-        </ScrollView>
+    useEffect(() => {
+        if (!item) {
+
+        }
+        if (media.desc && media.desc.resize) {
+            ImageManipulator.manipulateAsync(media.uri, [{ resize: { width: media.desc.resizeWidth, height: media.desc.resizeHeight } }], { compress: 0.75, format: ImageManipulator.SaveFormat.JPEG })
+                .then(res => {
+                    let i = media;
+                    i.desc.resize = false;
+                    i.uri = res.uri;
+                    setItem(i);
+                })
+                .catch(err => {
+                    console.log(err);
+                    // TODO: Handle this error
+                })
+        } else if (media.desc && !media.desc.approved) {
+            setTitle("Format this image");
+            setItem(media);
+            setMode(1);
+        }
+    })
+
+    function confirm() {
+
+    }
+
+    function renderMode() {
+        switch (mode) {
+            case 0:
+                return <View />
+            case 1:
+                return <CropMedia
+                    media={item}
+                />
+        }
+    }
+
+    return (
+        <Container style={styles.container}>
+            <Header iosBarStyle={"light-content"} transparent>
+                <Left>
+                    <Button transparent onPress={onReset}>
+                        <Icon name='close' />
+                    </Button>
+                </Left>
+                <Body>
+                    <Title>{title}</Title>
+                </Body>
+                <Right>
+                    <Button transparent onPress={confirm}>
+                        <Icon name='checkmark' />
+                    </Button>
+                </Right>
+            </Header>
+            <Content contentContainerStyle={styles.content}>
+                {renderMode()}
+            </Content>
+        </Container>
     )
 }
 
