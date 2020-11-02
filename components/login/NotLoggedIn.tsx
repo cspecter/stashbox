@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import { Button, Container, Content } from 'native-base';;
 import { Row, Grid } from 'react-native-easy-grid';
 import Logo from '../../components/design/Logo';
-import {styles} from './LoginStyles'
+import {styles} from '../../styles/styles'
 
 const NotLoggedIn = ({ onChange }) => {
 

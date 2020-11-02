@@ -4,7 +4,7 @@ import { Button, Container, Content, H1 } from 'native-base';
 import { Row, Grid } from 'react-native-easy-grid';
 import { AWS } from '../../lib/aws';
 import Logo from '../../components/design/Logo';
-import {styles} from './LoginStyles'
+import {styles} from '../../styles/styles'
 
 // Logged In
 

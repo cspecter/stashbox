@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Desktop, Tablet, Mobile, Default, TabletOrDesktop } from '../../components/MediaQueries'
+import { Desktop, Tablet, Mobile, Default, TabletOrDesktop } from '../MediaQueries'
 import { StyleSheet, Text, Dimensions, Platform, Image, View, TouchableOpacity } from 'react-native';
 //import { Button, Container, Content, Header, Left, Icon, Body, Title, Right, Item, Input, H1 } from 'native-base';
 import * as ImagePicker from 'expo-image-picker';

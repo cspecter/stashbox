@@ -4,7 +4,7 @@ import { Button, Container, Content, Header, Left, Icon, Body, Title, Right, Ite
 import { Row, Grid } from 'react-native-easy-grid';
 import { AWS } from '../../lib/aws';
 import { validate } from 'validate.js';
-import {styles, FormBox} from './LoginStyles'
+import {styles, FormBox} from '../../styles/styles'
 
 // Forgotten password form
 // TODO: Hook up the forgotten password form and confirmation pages

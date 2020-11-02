@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import { Button, Container, Content, Header, Left, Body, Title, Right, H1 } from 'native-base';
 import { Row, Grid } from 'react-native-easy-grid';
 import { useRouter } from 'next/router'
-import {styles} from './LoginStyles'
+import {styles} from '../../styles/styles'
 
 // Final Sign Up Confimation
 

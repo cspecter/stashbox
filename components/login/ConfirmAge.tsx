@@ -5,7 +5,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import {  Row, Grid } from 'react-native-easy-grid';
 import { AWS } from '../../lib/aws';
-import {styles} from './LoginStyles'
+import {styles} from '../../styles/styles'
 
 // Age verification
 

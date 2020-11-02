@@ -57,3 +57,11 @@ export function imageChecker(width: number, height: number) {
     return m
 
 }
+
+export function isImage(uri) {
+    return uri.substr(5, 5) === "image"
+}
+
+export function isVideo(uri) {
+    return uri.substr(5, 5) === "video"
+}

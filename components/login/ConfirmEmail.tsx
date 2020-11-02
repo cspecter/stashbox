@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import { Button, Container, Content, Header, Left, Body, Title, Right, Item, Input, H1 } from 'native-base';
 import { Row, Grid } from 'react-native-easy-grid';
 import { AWS } from '../../lib/aws';
-import {styles, FormBox} from './LoginStyles'
+import {styles, FormBox} from '../../styles/styles'
 
 // Confirm email address
 

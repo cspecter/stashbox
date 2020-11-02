@@ -5,7 +5,7 @@ import { Row, Grid } from 'react-native-easy-grid';
 import { AWS } from '../../lib/aws';
 import { validate } from 'validate.js';
 import { useRouter } from 'next/router'
-import {styles, FormBox} from './LoginStyles'
+import {styles, FormBox} from '../../styles/styles'
 
 const constraints = {
     from: {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container } from 'native-base';
 import { AWS } from '../../lib/aws';
 import Backgrounds from '../../components/backgrounds/Backgrounds';
-import {styles} from '../../components/login/LoginStyles'
+import {styles} from '../../styles/styles'
 
 // Components
 import ConfirmAge from '../../components/login/ConfirmAge'
