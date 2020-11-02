@@ -24,7 +24,7 @@ function createAWSAPi() {
     let CosmicUser;
     let UserName;
 
-    current();
+    current().then(c=>console.log(c)).catch(e=>console.error(e));
 
     return Object.freeze({
         signUp,
@@ -93,7 +93,6 @@ function createAWSAPi() {
             //console.log(AWSUser, CosmicUser);
             return CosmicUser
         } catch (error) {
-            console.log(error);
             throw new Error(error)
         }
     }
