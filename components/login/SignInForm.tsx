@@ -101,7 +101,7 @@ const SignInForm = ({ onChange, previousPage }) => {
             </div>
             <div style={{ flex: 1, width: "100%" }}>
               <Button block dark rounded bordered onPress={() => signin()} >
-                <Text>CREATE ACCOUNT</Text>
+                <Text>LOG IN</Text>
               </Button>
             </div>
           </Row>

@@ -5,17 +5,7 @@ import aws_exports from '../aws-exports';
 // in this way you are only importing Auth and configuring it.
 Amplify.configure({ ...aws_exports, ssr: true });
 
-import Cosmic from 'cosmicjs';
-
-const BUCKET_SLUG = process.env.NEXT_PUBLIC_COSMIC_BUCKET_SLUG;
-const READ_KEY = process.env.NEXT_PUBLIC_COSMIC_READ_KEY;
-const WRITE_KEY = process.env.NEXT_PUBLIC_COSMIC_WRITE_KEY;
-
-const bucket = Cosmic().bucket({
-  slug: BUCKET_SLUG,
-  read_key: READ_KEY,
-  write_key: WRITE_KEY
-})
+import {bucket} from './api'
 
 function createAWSAPi() {
     const { Auth } = withSSRContext();

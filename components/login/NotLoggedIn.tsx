@@ -19,7 +19,7 @@ const NotLoggedIn = ({ onChange }) => {
               <Button block rounded onPress={() => onChange(1)} >
                 <Text>SIGN UP</Text>
               </Button>
-              <Button block rounded bordered dark onPress={() => onChange(2)} style={{ marginTop: 10 }}>
+              <Button block rounded bordered dark onPress={() => onChange(5)} style={{ marginTop: 10 }}>
                 <Text>LOG IN</Text>
               </Button>
             </div>

@@ -139,5 +139,14 @@ export const ScaleControls = styled.div({
 });
 
 export const FormItem = styled.div({
-  marginTop: 10
+  marginTop: 10,
+  paddingLeft: 10,
+  paddingRight: 10
+});
+
+export const ProductItemMini = styled.div({
+  width: 150,
+  height: 250,
+  margin: 10,
+  position: 'relative'
 });
