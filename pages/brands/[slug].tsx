@@ -1,5 +1,3 @@
-import React , { useEffect, useState} from 'react';
-
 import { GetStaticProps, GetStaticPaths, GetStaticPropsContext , GetStaticPropsResult} from 'next'
 import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
@@ -17,15 +15,11 @@ type BrandType = Post & Posts;
 
 
 const Brand = ({ post, morePosts }: {post:Post, morePosts: Posts}) => {
-    const[ title, setTitle] = useState('fake-title');
-    useEffect(() => {
-        setTitle(post.title)
-    }, [post]);
 
     return (
         <View>
             <Header />
-            <Text style={styles.headline}>{title}</Text>
+            <Text style={styles.headline}>{post.title}</Text>
             { morePosts && morePosts.length > 0 && <MoreStories allPosts={morePosts} />}
         </View>
     );
