@@ -78,7 +78,28 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignSelf: 'center',
     margin: 20,
-  }
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
 });
 
 export const FormBox = styled.div({
@@ -149,4 +170,12 @@ export const ProductItemMini = styled.div({
   height: 250,
   margin: 10,
   position: 'relative'
+});
+
+export const Seperator = styled.div({
+  width: '100%',
+  height: 1,
+  borderTop: "1px solid rgba(0,0,0,0.25)",
+  marginTop: 5,
+  marginBottom: 5
 });

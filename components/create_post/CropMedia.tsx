@@ -41,8 +41,8 @@ const CropMedia = ({ media, onEdit }) => {
                 <Button transparent large>
                     <Icon
                         type="MaterialIcons"
-                        name="crop-portrait"
-                        style={{ fontSize: 40, color: aspect === 9 / 16 ? "#FFFFFF" : "blue" }}
+                        name="crop-7-5"
+                        style={{ fontSize: 40, color: aspect === 9 / 16 ? "#FFFFFF" : "blue", transform: "rotate(-90deg)" }}
                         onPress={() => setAspect(9 / 16)}
                     />
                 </Button>

@@ -46,18 +46,44 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'flex-start'
     },
+    badge: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        textAlign: 'center'
+    },
     unselectedBadge: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        textAlign: 'center',
         backgroundColor: 'rgba(255, 255, 255, 0.75)',
-        border: '1pm solid #000'
+        border: '2px solid #000'
+    },
+    selectedBadge: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        textAlign: 'center',
+        backgroundColor: 'green',
+        border: '2px solid #000'
+    },
+    removeBadge: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        textAlign: 'center',
+        backgroundColor: 'red',
+        border: '2px solid #000'
     },
     selectBadgeIconUnselected: {
-        fontSize: 15,
-        color: "#fff",
+        fontSize: 13,
+        color: "#000",
         lineHeight: 20
     },
     selectBadgeIconSelected: {
-        fontSize: 15,
-        color: "green",
+        fontSize: 13,
+        color: "white",
         lineHeight: 20
     }
 });
@@ -68,27 +94,36 @@ export const ProductItemMiniBadgeBox = styled.div({
     position: 'absolute'
 });
 
-const ProductMini = ({ item, selectBadge, onSelectChange }) => {
-    const [isSelected, setIsSelected] = useState(false);
+const ProductMini = ({ item, isSelected, selectBadge, onSelectChange, removeBadge, onRemove }) => {
 
     function onAction() {
         if (selectBadge) {
             const selectState = !isSelected;
-            setIsSelected(selectState);
             onSelectChange(item.slug, selectState);
+        } else if (removeBadge) {
+            onRemove(item.slug);
         }
     }
 
     function badges() {
-        const areBadges = selectBadge;
+        const areBadges = selectBadge || removeBadge;
 
-        const selectBadgeIcon = isSelected ? "checkmark-circle-outline" : "add-circle-outline"
+        const selectBadgeIcon = isSelected ? "check" : "plus"
 
         if (areBadges) {
             return <ProductItemMiniBadgeBox>
-                <Badge style={styles.unselectedBadge}>
-                    <Icon name={selectBadgeIcon} style={isSelected ? styles.selectBadgeIconSelected : styles.selectBadgeIconUnselected} />
-                </Badge>
+                {selectBadge && <Badge style={isSelected ? styles.selectedBadge : styles.unselectedBadge}>
+                    <Icon
+                        type="FontAwesome"
+                        name={selectBadgeIcon}
+                        style={isSelected ? styles.selectBadgeIconSelected : styles.selectBadgeIconUnselected} />
+                </Badge>}
+                {removeBadge && <Badge style={styles.removeBadge}>
+                    <Icon
+                        type="FontAwesome"
+                        name={"minus"}
+                        style={styles.selectBadgeIconUnselected} />
+                </Badge>}
             </ProductItemMiniBadgeBox>
         }
     }
@@ -129,8 +164,11 @@ const ProductMini = ({ item, selectBadge, onSelectChange }) => {
 
 ProductMini.propTypes = {
     item: PropTypes.object,
+    isSelected: PropTypes.bool,
     selectBadge: PropTypes.bool,
-    onSelectChange: PropTypes.func
+    onSelectChange: PropTypes.func,
+    removeBadge: PropTypes.bool,
+    onRemove: PropTypes.func
 };
 
 export default ProductMini
