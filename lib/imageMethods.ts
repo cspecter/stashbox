@@ -58,10 +58,10 @@ export function imageChecker(width: number, height: number) {
 
 }
 
-export function isImage(uri) {
+export function isImage(uri:string) {
     return uri.substr(5, 5) === "image"
 }
 
-export function isVideo(uri) {
+export function isVideo(uri:string) {
     return uri.substr(5, 5) === "video"
 }

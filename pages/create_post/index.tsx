@@ -15,13 +15,16 @@ import Landing from '../../components/create_post/Landing'
 import SelectionPreview from '../../components/create_post/SelectionPreview'
 import SubmissionForm from '../../components/create_post/SubmissionForm'
 
+import { MediaInt } from '../../interfaces'
+
+
 const CreatePost = () => {
     const router = useRouter();
     const [media, setMedia] = useState();
     const [user, setUser] = useState();
     const [mode, setMode] = useState(0);
-    const [selectionType, setSelectionType] = useState();
-    const [currIndex, setCurrIndex] = useState();
+    const [selectionType, setSelectionType] = useState<string| undefined>();
+    const [currIndex, setCurrIndex] = useState<number | undefined>();
 
     useEffect(() => {
         if (!user) {
@@ -56,6 +59,8 @@ const CreatePost = () => {
             aspect: [1, 1],
             quality: 1,
         });
+        console.log('pick image ')
+        console.log(result)
 
         if (!result.cancelled) {
             let res = result.selected;
