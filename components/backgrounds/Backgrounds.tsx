@@ -1,6 +1,6 @@
 import React from 'react';
 import NativeBaseStyle from './NativeBaseStyle';
-import Grad1 from './Grad1';
+import Grad1 from './Grad1'
 import Grad2 from './Grad2';
 
 const Backgrounds = (props) => {
