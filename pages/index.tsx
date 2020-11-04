@@ -1,5 +1,5 @@
 // @generated: @expo/next-adapter@2.1.41
-import React from 'react';
+
 import { StyleSheet, Text, View } from 'react-native';
 
 import { getAllBrandsForHome } from '../lib/api'
@@ -8,12 +8,16 @@ import { Posts } from '../interfaces';
 
 const Index = ({ allPosts }: Posts) => {
     const heroPost = allPosts[0];
+    console.log(allPosts)
     return (
         <View style={styles.container}>
-            <HeroPost
-                title={heroPost.title}
-                slug={heroPost.slug}
-            />
+            {
+                allPosts[0] ? <HeroPost
+                    title={heroPost.title}
+                    slug={heroPost.slug}
+                /> :
+                <Text>check for correct .env</Text>
+            }
         </View>
     );
 }
