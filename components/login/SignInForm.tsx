@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { NextPage } from 'next'
 import { Text } from 'react-native';
 import { Button, Container, Content, Header, Left, Icon, Body, Title, Right, Item, Input, H1 } from 'native-base';
 import { Row, Grid } from 'react-native-easy-grid';
@@ -6,6 +7,12 @@ import { AWS } from '../../lib/aws';
 import { validate } from 'validate.js';
 import { useRouter } from 'next/router'
 import {styles, FormBox} from '../../styles/styles'
+
+type propTypes = {
+    onChange:(number)=>void;
+    previousPage: string;
+}
+
 
 const constraints = {
     from: {
@@ -17,7 +24,7 @@ const constraints = {
 
 // Sign in form
 
-const SignInForm = ({ onChange, previousPage }) => {
+const SignInForm:NextPage<propTypes> = ({ onChange, previousPage }) => {
   const router = useRouter()
   const [params, setParams] = useState({ email: null, password: null });
   const [error, setError] = useState("");

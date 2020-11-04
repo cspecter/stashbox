@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
+import { NextPage } from 'next'
 import { Container } from 'native-base';
 import { AWS } from '../../lib/aws';
 import Backgrounds from '../../components/backgrounds/Backgrounds';
@@ -14,9 +15,21 @@ import SignInForm from '../../components/login/SignInForm'
 import SignUp from '../../components/login/SignUp'
 import SignUpFinish from '../../components/login/SignUpFinish'
 
-const Login = ({ init, previousPage }) => {
-  const [mode, setMode] = useState(null);
-  const [params, setparams] = useState({ email: null, password: null, username: null });
+
+type paramType = {
+    email?:string;
+    password?:string;
+    username?:string;
+}
+
+type loginType = {
+    init:number;
+    previousPage: string;
+}
+
+const Login:NextPage<loginType> = ({ init, previousPage }) => {
+  const [mode, setMode] = useState<number | undefined>();
+  const [params, setparams] = useState<paramType>();
   const [isOver21, setIsOver21] = useState(false);
   useEffect(() => {
     if (!mode) {
@@ -28,7 +41,7 @@ const Login = ({ init, previousPage }) => {
         setMode(init || 0)
       })
     }
-  });
+  },[mode]);
 
   function changeMode(n: number) {
     setMode(n);

@@ -22,3 +22,23 @@ export interface Preview {
 }
 
 export type FeaturedPostNPosts = Post & Posts;
+
+export interface MediaInt  {
+    cancelled:boolean;
+    type?: 'image' | 'video';
+    height?:number;
+    width?:number;
+    uri?:string;
+    exif?: object;
+    base64?:string;
+  }
+
+//   interface VideoObjInt  {
+//     cancelled:boolean;
+//     type?: 'image' | 'video';
+//     height?:number;
+//     width?:number;
+//     uri?:string;
+//     exif?: object;
+//     base64?:string;
+//   }
