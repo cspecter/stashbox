@@ -1,63 +1,7 @@
 import { bucket } from './api'
 import { v4 as uuidv4 } from 'uuid';
 import {blobCreationFromURI} from './imageMethods'
-
-const API_URL = process.env.COSMIC_API_URL || 'https://api.cosmicjs.com'
-const UPLOAD_API_URL = process.env.UPLOAD_API_URL || 'https://upload.cosmicjs.com'
-const API_VERSION = process.env.COSMIC_API_VERSION || 'v1'
-const URI = `${API_URL}/${API_VERSION}`
-const WRITE_KEY = process.env.NEXT_PUBLIC_COSMIC_WRITE_KEY;
-const BUCKET_SLUG = process.env.NEXT_PUBLIC_COSMIC_BUCKET_SLUG;
-const { requestHandler } = require('./requestHandler')
-
-const HTTP_METHODS = {
-    POST: 'post',
-    GET: 'get',
-    FETCH: 'fetch',
-    PUT: 'put',
-    PATCH: 'patch',
-    DELETE: 'delete'
-  }
-
-function addMedia(params) {
-    const endpoint = `${UPLOAD_API_URL}/${API_VERSION}/${BUCKET_SLUG}/media`
-    const data = new FormData()
-
-    if (params.media.buffer) {
-        console.log("appending media");
-      data.append('media', params.media.buffer, params.media.originalname)
-    } else {
-      data.append('media', params.media, params.media.name)
-    }
-    if (WRITE_KEY) {
-      data.append('write_key', WRITE_KEY)
-    }
-    if (params.folder) {
-      data.append('folder', params.folder)
-    }
-    if (params.metadata) {
-      data.append('metadata', JSON.stringify(params.metadata))
-    }
-    
-    for (var key of data.entries()) {
-        console.log(key[0] + ', ' + key[1]);
-    }
-
-    const getHeaders = ((form) => new Promise((resolve, reject) => {
-        console.log(data.entries());
-      if (params.media.buffer) {
-        form.getLength((err, length) => {
-          if (err) reject(err)
-          const headers = { 'Content-Length': length, ...form.getHeaders() }
-          resolve(headers)
-        })
-      } else {
-        resolve({ 'Content-Type': 'multipart/form-data' })
-      }
-    })
-    )
-    return requestHandler(HTTP_METHODS.POST, endpoint, data, { 'Content-Type': 'multipart/form-data' })
-}
+import {addMedia, uploadVideoToCosmic} from './cosmicMethods'
 
 export async function addMediaFromURI(uri, originalname) {
     const buffer = blobCreationFromURI(uri);
@@ -188,11 +132,15 @@ export async function createPost(params) {
     try {
         if (params.image) {
             const image = await addMediaFromURI(params.image, uuidv4());
-            postParams.image = image.media.original_name;
+            console.log(image);
+            postParams.image = image.media.name;
             const post = await addPost(postParams);
             return post
         } else if (params.video) {
-
+            const video = await uploadVideoToCosmic(params.video);
+            postParams.video = video._id;
+            const post = await addPost(postParams);
+            return post
         } else {
 
         }
