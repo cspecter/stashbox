@@ -92,11 +92,18 @@ const CreatePost = () => {
             onConfirm={postMedia}
             index={currIndex}
             length={media.length}
+            user={user}
         />
     }
 
     function postMedia() {
-
+        if ( media.length-1 > currIndex) {
+            setCurrIndex(currIndex + 1);
+        } else {
+            console.log("All done");
+            setMode(0)
+            setMedia(null);
+        }
     }
 
     function renderMode() {

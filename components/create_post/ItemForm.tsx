@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Desktop, Tablet, Mobile, Default, TabletOrDesktop } from '../MediaQueries'
 import { StyleSheet, Text, Dimensions, Platform, Modal, Alert, Image, View, ScrollView, Switch } from 'react-native';
-import { Button, Container, Content, Header, Left, Icon, Body, Title, Right, Item, Input, H1, H3, Root } from 'native-base';
+import { Button, Container, Content, Header, Left, Icon, Toast, Body, Title, Right, Item, Input, H1, H3, Root } from 'native-base';
 import { Video } from 'expo-av';
 import * as ImagePicker from 'expo-image-picker';
 import { Col, Row, Grid } from 'react-native-easy-grid';
@@ -13,21 +13,24 @@ import "react-datepicker/dist/react-datepicker.css";
 import { styles, FormItem, Seperator } from '../../styles/styles'
 import SelectProducts from './SelectProducts'
 import ProductMini from '../products/ProductMini';
-import Toast from '../../themes/native-base-theme-light/components/Toast';
 
 // Post creation and submission form
 // TODO: Fix the add products button
 
-const ItemForm = ({ media }) => {
+const ItemForm = ({ media, onUpdate, user }) => {
     const [date, setDate] = useState(new Date());
     const [dateOn, setDateOn] = useState(false);
     const [modalOn, setModalOn] = useState(false);
     const [remModalOn, setRemModalOn] = useState(false);
     const [remItem, setRemItem] = useState(false);
     const [selectedProducts, setSelectedProducts] = useState([]);
+    const [message, setMessage] = useState();
+    const [postDate, setPostDate] = useState();
 
     const updateDate = (d) => {
         setDate(d);
+        setPostDate(d.getTime())
+        update();
     }
 
     const switchDate = () => {
@@ -45,6 +48,7 @@ const ItemForm = ({ media }) => {
     function onSelectProducts(sel) {
         setSelectedProducts(sel);
         setModalOn(false);
+        update(sel);
     }
 
     function getProducts() {
@@ -55,6 +59,7 @@ const ItemForm = ({ media }) => {
                     item={item}
                     removeBadge
                     onRemove={onRemoveItem}
+                    key={item.slug}
                 />
             )
         });
@@ -82,6 +87,43 @@ const ItemForm = ({ media }) => {
         });
         setRemItem(null);
         setSelectedProducts(p);
+        update();
+    }
+
+    function onChangeMessage(text) {
+        setMessage(text);
+        update();
+    }
+
+    function update(prods?: any) {
+        const p = [];
+
+        if (prods) {
+            prods.forEach(item=>{
+                p.push(item._id)
+            })
+        } else if (selectedProducts) {
+            selectedProducts.forEach(item=>{
+                p.push(item._id)
+            })
+        }
+
+        let params = {
+            user: user.object._id,
+            products: p,
+            message,
+            postDate
+        }
+
+        if (media.uri) {
+            if (isImage(media.uri)) {
+                params['image'] = media.uri
+            } else if (isVideo(media.uri)) {
+                params['video'] = media.uri
+            }
+        }
+
+        onUpdate(params);
     }
 
     return (
@@ -148,7 +190,13 @@ const ItemForm = ({ media }) => {
             }
             <FormItem>
                 <Item underline>
-                    <Input placeholder="Add a message" />
+                    <Input 
+                        placeholder="Add a message" 
+                        multiline
+                        numberOfLines={2}
+                        value={message}
+                        onChangeText={text => onChangeMessage(text)}
+                    />
                 </Item>
             </FormItem>
             <FormItem>
@@ -183,6 +231,7 @@ const ItemForm = ({ media }) => {
                             }}
                             disabled={!dateOn}
                             showTimeSelect
+                            dateFormat="MMM d, yyyy h:mm aa"
                         />
                     </Col>
                 </Grid>

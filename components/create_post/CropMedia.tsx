@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { Desktop, Tablet, Mobile, Default, TabletOrDesktop } from '../../components/MediaQueries'
-import {  Dimensions, View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import { Button, Icon } from 'native-base';
 import Cropper from 'react-easy-crop';
 
-import {CropControls, ScaleControls, FormItem} from '../../styles/styles'
+import { CropControls, ScaleControls, FormItem } from '../../styles/styles'
 
 const { width, height } = Dimensions.get('window');
 
@@ -13,10 +13,24 @@ const { width, height } = Dimensions.get('window');
 const CropMedia = ({ media, onEdit }) => {
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [zoom, setZoom] = useState(1)
-    const [aspect, setAspect] = useState(1)
+    const [aspect, setAspect] = useState(1);
+
+    const onCropChange =(crop) => {
+        setCrop(crop)
+    }
+
+    const onLoad = (area) => {
+
+    }
 
     const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-        onEdit(croppedAreaPixels, aspect);
+        const finalCrop = {
+            originX: croppedAreaPixels.x, 
+            originY: croppedAreaPixels.y, 
+            width: croppedAreaPixels.height, 
+            height: croppedAreaPixels.width
+        }
+        onEdit(finalCrop, aspect);
     }, [])
 
     return (
@@ -59,14 +73,15 @@ const CropMedia = ({ media, onEdit }) => {
                 /> */}
             </ScaleControls>
             <Cropper
-                image={media.uri}
-                crop={crop}
-                zoom={zoom}
-                aspect={aspect}
-                onCropChange={setCrop}
-                onCropComplete={onCropComplete}
-                onZoomChange={setZoom}
-            />
+                    image={media.uri}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={aspect}
+                    onCropChange={onCropChange}
+                    onCropComplete={onCropComplete}
+                    onZoomChange={setZoom}
+                    onMediaLoaded={onLoad}
+                />
         </View>
     )
 }

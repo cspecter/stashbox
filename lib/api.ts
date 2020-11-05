@@ -1,5 +1,5 @@
 import Cosmic from 'cosmicjs';
-import {  Post, Posts, Preview , FeaturedPostNPosts} from '../interfaces';
+import { Post, Posts, Preview, FeaturedPostNPosts } from '../interfaces';
 
 const BUCKET_SLUG = process.env.NEXT_PUBLIC_COSMIC_BUCKET_SLUG;
 const READ_KEY = process.env.NEXT_PUBLIC_COSMIC_READ_KEY;
@@ -30,7 +30,7 @@ export async function getPreviewPostBySlug(slug) {
   }
 }
 
-export async function getAllBrandsWithSlug():Promise<Post[]>{
+export async function getAllBrandsWithSlug(): Promise<Post[]> {
   const params = {
     type: 'brands',
     props: 'slug',
@@ -39,7 +39,7 @@ export async function getAllBrandsWithSlug():Promise<Post[]>{
   return data.objects
 }
 
-export async function getAllBrandsForHome(preview: Preview):Promise<Posts> {
+export async function getAllBrandsForHome(preview: Preview): Promise<Posts> {
   const params = {
     type: 'brands',
     props: 'slug,title,content,metadata' // Limit the API response data by props
@@ -53,7 +53,7 @@ export async function getAllBrandsForHome(preview: Preview):Promise<Posts> {
 
 
 
-export async function getBrandAndMoreBrands(slug:string, preview:Preview){
+export async function getBrandAndMoreBrands(slug: string, preview: Preview) {
   const singleObjectParams = {
     slug,
     props: 'slug,title,metadata',
@@ -83,3 +83,4 @@ export async function getBrandAndMoreBrands(slug:string, preview:Preview){
     morePosts,
   }
 }
+

@@ -1,14 +1,14 @@
 const approvedRatios = ['1:1', '4:5', '9:16'];
 
 export function imageChecker(width: number, height: number) {
-    function gcd (a:number, b: number) {
-        return (b == 0) ? a : gcd (b, a%b);
+    function gcd(a: number, b: number) {
+        return (b == 0) ? a : gcd(b, a % b);
     }
 
     const w = width;
     const h = height;
-    const r = gcd (w, h);
-    const aspect = `${w/r}:${h/r}`
+    const r = gcd(w, h);
+    const aspect = `${w / r}:${h / r}`
 
     let m = {
         approved: false,
@@ -65,3 +65,27 @@ export function isImage(uri) {
 export function isVideo(uri) {
     return uri.substr(5, 5) === "video"
 }
+
+export function blobCreationFromURI(dataURI) {
+    // convert base64/URLEncoded data component to raw binary data held in a string
+    const sliceSize = 512;
+    const b64Data = dataURI.split(',')[1];
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, { type: mimeString });
+    return blob;
+} 

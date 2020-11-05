@@ -14,7 +14,9 @@
     "@expo/vector-icons": "^10.2.1",
     "@react-native-community/slider": "^4.0.0-rc.1",
     "aws-amplify": "^3.3.4",
+    "axios": "^0.21.0",
     "cosmicjs": "^3.3.1",
+    "data-uri-to-buffer": "^3.0.1",
     "date-fns": "^2.16.1",
     "expo": "~39.0.2",
     "expo-av": "~8.6.0",
@@ -43,6 +45,7 @@
     "remark": "^13.0.0",
     "remark-html": "^13.0.1",
     "styled-components": "^5.2.0",
+    "uuid": "^8.3.1",
     "validate.js": "^0.13.1"
   },
   "devDependencies": {
