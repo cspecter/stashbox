@@ -1,9 +1,10 @@
-import  { useReducer } from 'react';
+import { useReducer } from 'react';
 
 import { Button, Container, Content, Header, Left, Icon, Body, Title, Right, Item, Input, H1, H3, Text } from 'native-base';
 import { Row, Grid } from 'react-native-easy-grid';
-import { AWS } from '../../lib/aws';
 import validator from 'validator';
+import { AWS } from '../../lib/aws';
+
 import { styles, FormBox } from '../../styles/styles'
 import { SignUpI } from '../../interfaces'
 
@@ -36,16 +37,21 @@ function reducer(state, action) {
 }
 
 async function register(state: SignUpI, onSignedUp) {
-    if (state.username && state.email && state.password) {
-        const user = await AWS.signUp(state);
-        onSignedUp(state, user);
+    try {
+        if (state.username && state.email && state.password) {
+            const user = await AWS.signUp(state);
+            onSignedUp(state, user);
+        }
+    } catch (err) {
+        console.error(err)
     }
+
 }
 
 
 const SignUp = ({ onChange, onSignedUp }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
-    
+
 
     return (
         <Container style={styles.container}>
@@ -89,14 +95,6 @@ const SignUp = ({ onChange, onSignedUp }) => {
                                 />
                             </Item>
                         </FormBox>
-
-                        {/* <Text style={{ flex: 1, textAlign: 'center', color: 'red', height: 60, paddingTop: 10 }}>
-                            {error}
-                        </Text> */}
-
-
-
-
                     </Row>
                     <Row>
                         <Content style={{ flex: 1 }}>
