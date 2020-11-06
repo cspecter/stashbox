@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import  { useReducer } from 'react';
 
 import { Button, Container, Content, Header, Left, Icon, Body, Title, Right, Item, Input, H1, H3, Text } from 'native-base';
 import { Row, Grid } from 'react-native-easy-grid';
@@ -6,35 +6,10 @@ import { AWS } from '../../lib/aws';
 import validator from 'validator';
 import { styles, FormBox } from '../../styles/styles'
 import { SignUpI } from '../../interfaces'
-// import { useSignUp, useEmail, useUserName, usePassword } from '../../hooks';
 
-
-
-
-
-
-// const constraints = {
-//     from: {
-//       email: {
-//         message: "^Please enter a valid email address."
-//       }
-//     }
-//   };
-
-// Signup Screen
-let USER_NAME = 'username';
-let EMAIL = 'email';
-let PASSWORD = 'password';
-// const VALID = 'valid';
-// const CREATE_ACCOUNT = 'create'
-
-// function init() {
-//     return {
-//         username: '',
-//         email: '',
-//         password: ''
-//     };
-//   }
+const USER_NAME = 'username';
+const EMAIL = 'email';
+const PASSWORD = 'password';
 
 const initialState = {
     username: '',
@@ -44,18 +19,13 @@ const initialState = {
 
 
 function reducer(state, action) {
-    let _msg: string;
     switch (action.type) {
         case USER_NAME:
             if (action.payload === "") return { ...state, username: '' }
             return { ...state, username: action.payload };
-
         case EMAIL:
-
             const validationResult = validator.isEmail(action.payload); //=> true
-
             if (!validationResult) return { ...state, email: '' };
-
             return { ...state, email: action.payload };
         case PASSWORD:
             if (action.payload === "") return { ...state, password: '' };
@@ -65,37 +35,17 @@ function reducer(state, action) {
     }
 }
 
+async function register(state: SignUpI, onSignedUp) {
+    if (state.username && state.email && state.password) {
+        const user = await AWS.signUp(state);
+        onSignedUp(state, user);
+    }
+}
 
 
 const SignUp = ({ onChange, onSignedUp }) => {
-
     const [state, dispatch] = useReducer(reducer, initialState);
-
     
-
-    // const [userNameError, setUserNameError] = useState(false);
-    // const [emailError, setEmailError] = useState(false);
-    // const [passwordError, setPasswordError] = useState(false);
-
-
-
-
-
-
-    async function register(state: SignUpI) {
-        
-
-        if (!state.username || !state.email || !state.password) {
-            // (!state.username) ? setUserNameError(true) : setUserNameError(false);
-            // (!state.email) ? setEmailError(true) : setEmailError(false);
-            // (!state.password) ? setPasswordError(true) : setPasswordError(false);
-        } else {
-            const user = await AWS.signUp(state);
-            onSignedUp(state, user);
-
-        }
-
-    }
 
     return (
         <Container style={styles.container}>
@@ -167,7 +117,7 @@ const SignUp = ({ onChange, onSignedUp }) => {
                                 onPress={
                                     () => {
                                         // dispatch({ type: CREATE_ACCOUNT });
-                                        register(state);
+                                        register(state, onSignedUp);
                                     }
                                 }>
                                 <Text>CREATE ACCOUNT</Text>
