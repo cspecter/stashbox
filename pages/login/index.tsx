@@ -15,12 +15,9 @@ import SignInForm from '../../components/login/SignInForm'
 import SignUp from '../../components/login/SignUp'
 import SignUpFinish from '../../components/login/SignUpFinish'
 
+import { SignUpI } from '../../interfaces'
 
-type paramType = {
-    email?:string;
-    password?:string;
-    username?:string;
-}
+
 
 type loginType = {
     init:number;
@@ -29,7 +26,7 @@ type loginType = {
 
 const Login:NextPage<loginType> = ({ init, previousPage }) => {
   const [mode, setMode] = useState<number | undefined>();
-  const [params, setparams] = useState<paramType>();
+  const [params, setparams] = useState<SignUpI>();
   const [isOver21, setIsOver21] = useState(false);
   useEffect(() => {
     if (!mode) {

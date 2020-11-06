@@ -1,6 +1,7 @@
 // Configure Amplify
 import Amplify, { withSSRContext } from 'aws-amplify';
 import aws_exports from '../aws-exports';
+import { SignUpI } from '../interfaces'
 
 // in this way you are only importing Auth and configuring it.
 Amplify.configure({ ...aws_exports, ssr: true });
@@ -31,7 +32,7 @@ function createAWSAPi() {
         isSignedIn
     });
 
-    function signUp({ email, password, username }) {
+    function signUp({ email, password, username }: SignUpI) {
         return new Promise(async (resolve, reject) => {
             try {
                 const { user } = await Auth.signUp({

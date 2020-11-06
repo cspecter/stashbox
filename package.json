@@ -43,7 +43,8 @@
     "remark": "^13.0.0",
     "remark-html": "^13.0.1",
     "styled-components": "^5.2.0",
-    "validate.js": "^0.13.1"
+    "validate.js": "^0.13.1",
+    "validator": "^13.1.17"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",

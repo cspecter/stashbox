@@ -1,9 +1,13 @@
 import Cosmic from 'cosmicjs';
-import {  Post, Posts, Preview , FeaturedPostNPosts} from '../interfaces';
+import {  Post, Posts, Preview } from '../interfaces';
+
+
 
 const BUCKET_SLUG = process.env.NEXT_PUBLIC_COSMIC_BUCKET_SLUG;
 const READ_KEY = process.env.NEXT_PUBLIC_COSMIC_READ_KEY;
 const WRITE_KEY = process.env.NEXT_PUBLIC_COSMIC_WRITE_KEY;
+
+
 
 export const bucket = Cosmic().bucket({
   slug: BUCKET_SLUG,
@@ -11,9 +15,13 @@ export const bucket = Cosmic().bucket({
   write_key: WRITE_KEY
 })
 
+// export const [bucket, hasBucket] = useBucket(BUCKET_SLUG, READ_KEY, WRITE_KEY)
+
+
+
 const is404 = (error) => /not found/i.test(error.message)
 
-export async function getPreviewPostBySlug(slug) {
+export async function getPreviewPostBySlug(slug:string) {
   const params = {
     slug,
     props: 'slug',
@@ -42,16 +50,33 @@ export async function getAllBrandsWithSlug():Promise<Post[]>{
 export async function getAllBrandsForHome(preview: Preview):Promise<Posts> {
   const params = {
     type: 'brands',
-    props: 'slug,title,content,metadata' // Limit the API response data by props
+    props: 'slug,title' // Limit the API response data by props
     // props: 'title,slug,metadata,created_at',
     // ...(preview && { status: 'all' }),
   }
+  
   const data = await bucket.getObjects(params)
   return data.objects
 }
 
 
+export async function getAllUsers() {
+    const params = {
+        type: 'users',
+        props: 'slug, metadata'
+      }
+      const data = await bucket.getObjects(params)
+      return data.objects
+}
 
+export async function getUser(uId:string) {
+    const params = {
+        type: 'user',
+        props: 'slug, metadata'
+      }
+      const data = await bucket.getObjects(params)
+      return data.objects
+}
 
 export async function getBrandAndMoreBrands(slug:string, preview:Preview){
   const singleObjectParams = {
